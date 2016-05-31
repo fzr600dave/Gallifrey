@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 using Gallifrey.Versions;
 
 namespace Gallifrey.UI.Modern.Alpha
@@ -10,6 +11,7 @@ namespace Gallifrey.UI.Modern.Alpha
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            DispatcherHelper.Initialize();
             Modern.App.Run(InstanceType.Alpha);
         }
     }

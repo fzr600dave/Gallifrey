@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Timers;
+using GalaSoft.MvvmLight;
 using Gallifrey.Comparers;
 using Gallifrey.ExtensionMethods;
 using Gallifrey.UI.Modern.Helpers;
@@ -11,12 +12,37 @@ using Gallifrey.Versions;
 
 namespace Gallifrey.UI.Modern.Models
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase
     {
+        private string _exported;
+        private string _totalTimerCount;
+        private string _unexportedTime;
+        private string _exportTarget;
+        private string _exported1;
+        private string _exportedTargetTotalMinutes;
+        private string _versionName;
+        private string _loggedInAs;
+        private string _loggedInDisplayName;
+        private bool _hasUpdate;
+        private bool _hasInactiveTime;
+        private bool _timerRunning;
+        private bool _haveTimeToExport;
+        private bool _haveTempTime;
+        private bool _isPremium;
+        private bool _isStable;
+        private string _inactiveMinutes;
         public ModelHelpers ModelHelpers { get; }
-        public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<TimerDateModel> TimerDates { get; private set; }
-        public string InactiveMinutes { get; private set; }
+
+        public string InactiveMinutes
+        {
+            get { return _inactiveMinutes; }
+            private set
+            {
+                _inactiveMinutes = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public MainViewModel(ModelHelpers modelHelpers)
         {
@@ -36,22 +62,165 @@ namespace Gallifrey.UI.Modern.Models
             modelHelpers.SelectTimerEvent += (sender, timerId) => SetSelectedTimer(timerId);
         }
 
-        public string ExportedNumber => ModelHelpers.Gallifrey.JiraTimerCollection.GetNumberExported().Item1.ToString();
-        public string TotalTimerCount => ModelHelpers.Gallifrey.JiraTimerCollection.GetNumberExported().Item2.ToString();
-        public string UnexportedTime => ModelHelpers.Gallifrey.JiraTimerCollection.GetTotalUnexportedTime().FormatAsString(false);
-        public string ExportTarget => ModelHelpers.Gallifrey.Settings.AppSettings.GetTargetThisWeek().FormatAsString(false);
-        public string Exported => ModelHelpers.Gallifrey.JiraTimerCollection.GetTotalExportedTimeThisWeek(ModelHelpers.Gallifrey.Settings.AppSettings.StartOfWeek).FormatAsString(false);
-        public string ExportedTargetTotalMinutes => ModelHelpers.Gallifrey.Settings.AppSettings.GetTargetThisWeek().TotalMinutes.ToString();
-        public string VersionName => ModelHelpers.Gallifrey.VersionControl.UpdateInstalled ? "Click To Install New Version" : ModelHelpers.Gallifrey.VersionControl.VersionName;
-        public string LoggedInAs => ModelHelpers.Gallifrey.JiraConnection.CurrentUser != null ? $"Logged in as {ModelHelpers.Gallifrey.JiraConnection.CurrentUser.key} ({ModelHelpers.Gallifrey.JiraConnection.CurrentUser.emailAddress})" : "Please Connect To Jira";
-        public string LoggedInDisplayName => ModelHelpers.Gallifrey.JiraConnection.CurrentUser != null ? ModelHelpers.Gallifrey.JiraConnection.CurrentUser.displayName : "Not Logged In To Jira";
-        public bool HasUpdate => ModelHelpers.Gallifrey.VersionControl.UpdateInstalled;
-        public bool HasInactiveTime => !string.IsNullOrWhiteSpace(InactiveMinutes);
-        public bool TimerRunning => !string.IsNullOrWhiteSpace(CurrentRunningTimerDescription);
-        public bool HaveTimeToExport => !string.IsNullOrWhiteSpace(TimeToExportMessage);
-        public bool HaveTempTime => !string.IsNullOrWhiteSpace(TempTimeMessage);
-        public bool IsPremium => ModelHelpers.Gallifrey.Settings.InternalSettings.IsPremium;
-        public bool IsStable => ModelHelpers.Gallifrey.VersionControl.InstanceType == InstanceType.Stable;
+        public string ExportedNumber
+        {
+            get { return _exported; }
+            set
+            {
+                _exported = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string TotalTimerCount
+        {
+            get { return _totalTimerCount; }
+            set
+            {
+                _totalTimerCount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string UnexportedTime
+        {
+            get { return _unexportedTime; }
+            set
+            {
+                _unexportedTime = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string ExportTarget
+        {
+            get { return _exportTarget; }
+            set
+            {
+                _exportTarget = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string Exported
+        {
+            get { return _exported1; }
+            set
+            {
+                _exported1 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string ExportedTargetTotalMinutes
+        {
+            get { return _exportedTargetTotalMinutes; }
+            set
+            {
+                _exportedTargetTotalMinutes = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string VersionName
+        {
+            get { return _versionName; }
+            set
+            {
+                _versionName = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string LoggedInAs
+        {
+            get { return _loggedInAs; }
+            set
+            {
+                _loggedInAs = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string LoggedInDisplayName
+        {
+            get { return _loggedInDisplayName; }
+            set
+            {
+                _loggedInDisplayName = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool HasUpdate
+        {
+            get { return _hasUpdate; }
+            set
+            {
+                _hasUpdate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool HasInactiveTime
+        {
+            get { return _hasInactiveTime; }
+            set
+            {
+                _hasInactiveTime = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool TimerRunning
+        {
+            get { return _timerRunning; }
+            set
+            {
+                _timerRunning = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool HaveTimeToExport
+        {
+            get { return _haveTimeToExport; }
+            set
+            {
+                _haveTimeToExport = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool HaveTempTime
+        {
+            get { return _haveTempTime; }
+            set
+            {
+                _haveTempTime = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsPremium
+        {
+            get { return _isPremium; }
+            set
+            {
+                _isPremium = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsStable
+        {
+            get { return _isStable; }
+            set
+            {
+                _isStable = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string AppTitle
         {
@@ -139,29 +308,29 @@ namespace Gallifrey.UI.Modern.Models
 
         private void VersionControlPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VersionName"));
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VersionName"));
         }
 
         private void runningWatcherElapsed(object sender, ElapsedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ExportedNumber"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TotalTimerCount"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UnexportedTime"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ExportTarget"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Exported"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ExportedTargetTotalMinutes"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HasUpdate"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TimerRunning"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRunningTimerDescription"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TimeToExportMessage"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HaveTimeToExport"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ExportedTotalMinutes"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HaveTempTime"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TempTimeMessage"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LoggedInAs"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LoggedInDisplayName"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AppTitle"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsPremium"));
+            ExportedNumber = ModelHelpers.Gallifrey.JiraTimerCollection.GetNumberExported().Item1.ToString();
+            TotalTimerCount = ModelHelpers.Gallifrey.JiraTimerCollection.GetNumberExported().Item2.ToString();
+            UnexportedTime = ModelHelpers.Gallifrey.JiraTimerCollection.GetTotalUnexportedTime().FormatAsString(false);
+            ExportTarget = ModelHelpers.Gallifrey.Settings.AppSettings.GetTargetThisWeek().FormatAsString(false);
+            Exported =
+                ModelHelpers.Gallifrey.JiraTimerCollection.GetTotalExportedTimeThisWeek(
+                    ModelHelpers.Gallifrey.Settings.AppSettings.StartOfWeek).FormatAsString(false);
+            ExportedTargetTotalMinutes = ModelHelpers.Gallifrey.Settings.AppSettings.GetTargetThisWeek().TotalMinutes.ToString();
+            VersionName = ModelHelpers.Gallifrey.VersionControl.UpdateInstalled ? "Click To Install New Version" : ModelHelpers.Gallifrey.VersionControl.VersionName;
+            LoggedInAs = ModelHelpers.Gallifrey.JiraConnection.CurrentUser != null ? $"Logged in as {ModelHelpers.Gallifrey.JiraConnection.CurrentUser.key} ({ModelHelpers.Gallifrey.JiraConnection.CurrentUser.emailAddress})" : "Please Connect To Jira";
+            LoggedInDisplayName = ModelHelpers.Gallifrey.JiraConnection.CurrentUser != null ? ModelHelpers.Gallifrey.JiraConnection.CurrentUser.displayName : "Not Logged In To Jira";
+            HasUpdate = ModelHelpers.Gallifrey.VersionControl.UpdateInstalled;
+            HasInactiveTime = !string.IsNullOrWhiteSpace(InactiveMinutes);
+            TimerRunning = !string.IsNullOrWhiteSpace(CurrentRunningTimerDescription);
+            HaveTimeToExport = !string.IsNullOrWhiteSpace(TimeToExportMessage);
+            HaveTempTime = !string.IsNullOrWhiteSpace(TempTimeMessage);
+            IsPremium = ModelHelpers.Gallifrey.Settings.InternalSettings.IsPremium;
+            IsStable = ModelHelpers.Gallifrey.VersionControl.InstanceType == InstanceType.Stable;
         }
 
         private void RefreshModel()
@@ -219,7 +388,11 @@ namespace Gallifrey.UI.Modern.Models
             var orderedCollection = TimerDates.Where(x => validTimerDates.Contains(x.TimerDate)).OrderByDescending(x => x.TimerDate).ToList();
             if (orderedCollection.Count != TimerDates.Count)
             {
-                TimerDates = new ObservableCollection<TimerDateModel>(orderedCollection);
+                TimerDates.Clear();
+                foreach (var timerDateModel in orderedCollection)
+                {
+                    TimerDates.Add(timerDateModel);
+                }
             }
             else
             {
@@ -230,13 +403,15 @@ namespace Gallifrey.UI.Modern.Models
 
                     if (main.TimerDate != ordered.TimerDate)
                     {
-                        TimerDates = new ObservableCollection<TimerDateModel>(orderedCollection);
+                        TimerDates.Clear();
+                        foreach (var timerDateModel in orderedCollection)
+                        {
+                            TimerDates.Add(timerDateModel);
+                        }
                         break;
                     }
                 }
             }
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TimerDates"));
 
             runningWatcherElapsed(this, null);
         }
@@ -303,9 +478,6 @@ namespace Gallifrey.UI.Modern.Models
 
                 InactiveMinutes = $"No Timer Running For {minutesSinceActivity} Minute{minutesPlural}";
             }
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("InactiveMinutes"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HasInactiveTime"));
         }
 
         public IEnumerable<Guid> GetSelectedTimerIds()

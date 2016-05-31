@@ -1,9 +1,12 @@
 source https://www.nuget.org/api/v2
 
 nuget Atlassian.SDK @= 2.5.0
+nuget Castle.Windsor
+nuget CommonServiceLocator.WindsorAdapter
 nuget Exceptionless.Portable
 nuget Exceptionless.Windows
 nuget Exceptionless.Wpf
 nuget MahApps.Metro prerelease
+nuget MvvmLightLibs
 nuget Newtonsoft.Json
 nuget RestSharp

@@ -1,3 +1,6 @@
 Exceptionless.Portable
 Exceptionless.Wpf
 MahApps.Metro
+MvvmLightLibs
+Castle.Windsor
+CommonServiceLocator.WindsorAdapter

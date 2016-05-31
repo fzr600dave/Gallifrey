@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Deployment.Application;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GalaSoft.MvvmLight;
 using Gallifrey.AppTracking;
 
 namespace Gallifrey.Versions
@@ -21,17 +22,27 @@ namespace Gallifrey.Versions
         event PropertyChangedEventHandler PropertyChanged;
     }
 
-    public class VersionControl : IVersionControl
+    public class VersionControl : ViewModelBase, IVersionControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly ITrackUsage trackUsage;
         public InstanceType InstanceType { get; private set; }
-        public string VersionName { get; private set; }
+
+        public string VersionName
+        {
+            get { return _versionName; }
+            private set
+            {
+                _versionName = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public string AppName { get; private set; }
         public bool UpdateInstalled { get; private set; }
 
         private DateTime lastUpdateCheck;
+        private string _versionName;
 
         public bool IsAutomatedDeploy => ApplicationDeployment.IsNetworkDeployed;
         public Version DeployedVersion => UpdateInstalled ? ApplicationDeployment.CurrentDeployment.UpdatedVersion : ApplicationDeployment.CurrentDeployment.CurrentVersion;
@@ -60,8 +71,7 @@ namespace Gallifrey.Versions
             }
 
             VersionName = $"v{VersionName}{betaText}";
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VersionName"));
+            
         }
 
         public Task<UpdateResult> CheckForUpdates(bool manualCheck = false)
